@@ -37,7 +37,7 @@ script/plugin install git://github.com/novelys/paiementcic.git
 ### in the payment by card view :
 
     - form_tag PaiementCic.target_url do
-      = paiement_cic_hidden_fields(@order, @order_transaction)
+      = paiement_cic_hidden_fields(@order, @order_transaction, :url_retour => edit_order_url(order), :url_retour_ok => bank_ok_order_transaction_url(order_transaction), :url_retour_err => bank_err_order_transaction_url(order_transaction))
       = submit_tag "Accéder au site de la banque", :style => "font-weight: bold;"
       = image_tag "reassuring_pictograms.jpg", :alt => "Pictogrammes rassurants", :style => "width: 157px;"
 
