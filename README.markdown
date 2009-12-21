@@ -1,6 +1,6 @@
 # Paiement CIC
 
-Paiement CIC is a plugin to ease credit card payment with the CIC / Crédit Mutuel banks system.
+Paiement CIC is a plugin to ease credit card payment with the CIC / Crédit Mutuel banks system version 3.0.
 It's a Ruby on Rails port of the connexion kits published by the bank.
 
 * The Plugin [site](http://github.com/novelys/cicpayment)
@@ -24,11 +24,11 @@ script/plugin install git://github.com/novelys/paiementcic.git
 
 ### in development.rb :
 
-    PaiementCic.target_url = "https://ssl.paiement.cic-banques.fr/test/paiement.cgi"
+    PaiementCic.target_url = "https://ssl.paiement.cic-banques.fr/test/paiement.cgi" # or https://paiement.creditmutuel.fr/test/paiement.cgi
 
 ### in production.rb :
 
-    PaiementCic.target_url = "https://ssl.paiement.cic-banques.fr/paiement.cgi"
+    PaiementCic.target_url = "https://ssl.paiement.cic-banques.fr/paiement.cgi" # or https://paiement.creditmutuel.fr/paiement.cgi
 
 ### in order controller :
 
@@ -71,15 +71,15 @@ script/plugin install git://github.com/novelys/paiementcic.git
 
           order_transaction.update_attribute :success, true
       
-          receipt = "OK"
+          receipt = "0"
         else
           order.transaction_declined!
           order.update_attribute :description, "Document Falsifie."
           order_transaction.update_attribute :success, false
 
-          receipt = "Document Falsifie"
+          receipt = "1\n#{PaiementCic.mac_string}"
         end
-        render :text => "Version: 1\n#{receipt}\n"
+        render :text => "Pragma: no-cache\nContent-type: text/plain\n\nversion=2\ncdr=#{receipt}"
       end
 
       def bank_ok

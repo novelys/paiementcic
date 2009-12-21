@@ -14,10 +14,13 @@ class String
 end
 
 class PaiementCic
+  @@version = "3.0" # clé extraite grâce à extract2HmacSha1.html fourni par le Crédit Mutuel
+  cattr_accessor :version
+
   @@hmac_key = "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ" # clé extraite grâce à extract2HmacSha1.html fourni par le Crédit Mutuel
   cattr_accessor :hmac_key
   
-  @@target_url = "https://ssl.paiement.cic-banques.fr/test/paiement.cgi" # "https://ssl.paiement.cic-banques.fr/paiement.cgi"
+  @@target_url = "https://paiement.creditmutuel.fr/test/paiement.cgi" # "https://ssl.paiement.cic-banques.fr/paiement.cgi"
   cattr_accessor :target_url
   
   @@tpe = "123456"
@@ -26,61 +29,84 @@ class PaiementCic
   @@societe = "masociete"
   cattr_accessor :societe
   
+  @@url_ok = ""
+  cattr_accessor :url_ok
+
   def self.date_format
     "%d/%m/%Y:%H:%M:%S"
   end
 
   def self.config(amount_in_cents, reference)
     oa = ActiveSupport::OrderedHash.new
+    oa["version"]     = "3.0"
     oa["TPE"]         = tpe
     oa["date"]        = Time.now.strftime(date_format)
-    oa["montant"]     =  ("%.2f" % (amount_in_cents/100.0)) + "EUR"
+    oa["montant"]     =  ("%.2f" % amount_in_cents) + "EUR"
     oa["reference"]   = reference
     oa["texte-libre"] = ""
-    oa["version"]     = "1.2open"
     oa["lgue"]      = "FR"
     oa["societe"]     = societe
+    oa["mail"]        = ""
     oa
   end
 
-  def self.calculate_hmac(ordered_hash)
-    data = ordered_hash.values.join("*") + "*"
-    hmac(data)
+  def self.mac_string params
+    hmac_key = PaiementCic.new
+    mac_string = [hmac_key.tpe, params["date"], params['montant'], params['reference'], params['texte-libre'], hmac_key.version, params['code-retour'], params['cvx'], params['vld'], params['brand'], params['status3ds'], params['numauto'], params['motifrefus'], params['originecb'], params['bincb'], params['hpancb'], params['ipclient'], params['originetr'], params['veres'], params['pares']].join('*') + "*"
   end
-  
+
   def self.verify_hmac params
-    tpe = params[:TPE]
-    date = params[:date]
-    montant = params[:montant]
-    reference = params[:reference]
-    mac = params[:MAC].downcase
-    texte_libre = params['texte-libre']
-    code_retour = params['code-retour']
-    retour_plus = params['retourPLUS']
-    version = "1.2open"
+    hmac_key = PaiementCic.new
+    mac_string = [hmac_key.tpe, params["date"], params['montant'], params['reference'], params['texte-libre'], hmac_key.version, params['code-retour'], params['cvx'], params['vld'], params['brand'], params['status3ds'], params['numauto'], params['motifrefus'], params['originecb'], params['bincb'], params['hpancb'], params['ipclient'], params['originetr'], params['veres'], params['pares']].join('*') + "*"
 
-    data = retour_plus + [tpe, date, montant, reference, texte_libre, version, code_retour].join("+") + "+"
-
-    mac == hmac(data)
+    hmac_key.valid_hmac?(mac_string, params['MAC'])
   end
+	
+  # Check if the HMAC matches the HMAC of the data string
+	def valid_hmac?(mac_string, sent_mac)
+		computeHMACSHA1(mac_string) == sent_mac.downcase
+	end
+	
+  # Return the HMAC for a data string
+	def computeHMACSHA1(data)
+		hmac_sha1(usable_key(self), data).downcase
+	end
   
-  def self.hmac(data)
-    pass = "";
-    k1 = [Digest::SHA1.hexdigest(pass)].pack("H*");
-    l1 = k1.length
+  def hmac_sha1(key, data)
+		length = 64
 
-    k2 = [hmac_key].pack("H*")
-    l2 = k2.length
-    if (l1 > l2)
-      k2 = k2.ljust(l1, 0.chr)
-    elsif (l2 > l1)
-      k1 = k1.ljust(l2, 0.chr)
-    end
-    xor_res = k1 ^ k2
-    hmac_sha1(xor_res, data).downcase
-  end
+		if (key.length > length) 
+			key = [Digest::SHA1.hexdigest(key)].pack("H*")
+		end
 
-  def self.hmac_sha1(key, data)
-    OpenSSL::HMAC.hexdigest(OpenSSL::Digest::Digest.new("sha1"), key, data)
-  end
+		key  = key.ljust(length, 0.chr)
+		ipad = ''.ljust(length, 54.chr)
+		opad = ''.ljust(length, 92.chr)
+
+		k_ipad = key ^ ipad
+		k_opad = key ^ opad
+
+		#Digest::SHA1.hexdigest(k_opad + [Digest::SHA1.hexdigest(k_ipad + sData)].pack("H*"))
+	  OpenSSL::HMAC.hexdigest(OpenSSL::Digest::Digest.new("sha1"), key, data)
+	end
+
+  private
+	# Return the key to be used in the hmac function
+	def usable_key(payement)
+
+		hex_string_key  = payement.hmac_key[0..37]
+		hex_final   = payement.hmac_key[38..40] + "00";
+
+		cca0 = hex_final[0]
+
+		if cca0 > 70 && cca0 < 97
+			hex_string_key += (cca0 - 23).chr + hex_final[1..2]
+		elsif hex_final[1..2] == "M" 
+			hex_string_key += hex_final[0..1] + "0" 
+		else 
+			hex_string_key += hex_final[0..2]
+		end
+
+		[hex_string_key].pack("H*")
+	end
 end
