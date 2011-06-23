@@ -9,7 +9,11 @@ It's a Ruby on Rails port of the connexion kits published by the bank.
 
 ## INSTALL
 
-script/plugin install git://github.com/novelys/paiementcic.git
+    script/plugin install git://github.com/novelys/paiementcic.git
+
+or, in your Gemfile
+
+    gem 'paiement_cic', :git => 'git://github.com/novelys/paiementcic.git', :branch => 'gem'
 
 ## USAGE
 
