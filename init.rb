@@ -1,2 +1,2 @@
 require "paiement_cic"
-require "paiement_cic_helper"
+require "paiement_cic/form_helper"

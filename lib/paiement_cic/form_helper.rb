@@ -1,5 +1,5 @@
 ## refactor this
-module PaiementCicHelper
+module PaiementCic::FormHelper
   def paiement_cic_hidden_fields(order, price, order_transaction, options = {})
     oa = PaiementCic.config(price, order_transaction.reference)
 

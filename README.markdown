@@ -32,7 +32,7 @@ script/plugin install git://github.com/novelys/paiementcic.git
 
 ### in order controller :
 
-    helper :paiement_cic
+    helper :'paiement_cic/form'
 
 ### in the payment by card view :
 
