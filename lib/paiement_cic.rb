@@ -8,7 +8,7 @@ class String
       unless other.kind_of? String
     raise ArgumentError, "Can't bitwise-XOR strings of different length" \
       unless self.length == other.length
-    result = (0..self.length-1).collect { |i| self[i] ^ other[i] }
+    result = (0..self.length-1).collect { |i| self[i].ord ^ other[i].ord }
     result.pack("C*")
   end
 end
@@ -97,7 +97,7 @@ class PaiementCic
 		hex_string_key  = payement.hmac_key[0..37]
 		hex_final   = payement.hmac_key[38..40] + "00";
 
-		cca0 = hex_final[0]
+		cca0 = hex_final[0].ord
 
 		if cca0 > 70 && cca0 < 97
 			hex_string_key += (cca0 - 23).chr + hex_final[1..2]
