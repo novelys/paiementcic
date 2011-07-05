@@ -22,6 +22,6 @@ module PaiementCicHelper
         <input type="hidden" name="societe"           id="societe"        value="' + oa["societe"] + '" />
         <input type="hidden" name="texte-libre"       id="texte-libre"    value="' + oa["texte-libre"] + '" />
         <input type="hidden" name="mail"              id="mail"	          value="''" />'
-    html
+    html.html_safe
   end
 end
