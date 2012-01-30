@@ -13,7 +13,7 @@ It's a Ruby on Rails port of the connexion kits published by the bank.
 
 or, in your Gemfile
 
-    gem 'paiement_cic', :git => 'git://github.com/novelys/paiementcic.git', :branch => 'gem'
+    gem 'paiement_cic'
 
 ## USAGE
 
@@ -102,4 +102,4 @@ or, in your Gemfile
 
 
 ## License
-Copyright (c) 2008-2009 Novelys Team, released under the MIT license
+Copyright (c) 2008-2012 Novelys Team, released under the MIT license
