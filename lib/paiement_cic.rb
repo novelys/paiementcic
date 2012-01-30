@@ -14,6 +14,8 @@ class String
 end
 
 class PaiementCic
+  autoload :FormHelper, "paiement_cic/form_helper"
+
   @@version = "3.0" # clé extraite grâce à extract2HmacSha1.html fourni par le Crédit Mutuel
   cattr_accessor :version
 
