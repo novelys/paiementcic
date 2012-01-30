@@ -8,6 +8,10 @@ module PaiementCic::FormHelper
     chaine = [oMac.tpe, sDate, oa["montant"], oa["reference"].to_s, oa["texte-libre"], oMac.version, "FR", oMac.societe, "", "", "", "", "", "", "", "", "", "", ""].join("*")
     chaineMAC = oMac.computeHMACSHA1(chaine)
     
+    url_retour      = options[:url_retour] || bank_callback_order_transactions_url
+    url_retour_ok   = options[:url_retour_ok] || bank_callback_order_transactions_url(order)
+    url_retour_err  = options[:url_retour_err] || bank_err_order_transaction_url(order)
+    
     html = '
         <input type="hidden" name="version"           id="version"        value="' + oa["version"] + '" />
         <input type="hidden" name="TPE"               id="TPE"            value="' + oa["TPE"] + '" />
@@ -15,9 +19,9 @@ module PaiementCic::FormHelper
         <input type="hidden" name="montant"           id="montant"        value="' + oa["montant"] + '" />
         <input type="hidden" name="reference"         id="reference"      value="' + oa["reference"].to_s + '" />
         <input type="hidden" name="MAC"               id="MAC"            value="' + chaineMAC + '" />
-        <input type="hidden" name="url_retour"        id="url_retour"     value="' + bank_callback_order_transactions_url + '" />
-        <input type="hidden" name="url_retour_ok"     id="url_retour_ok"  value="' + bank_ok_order_transaction_url(order) + '" />
-        <input type="hidden" name="url_retour_err"    id="url_retour_err" value="' + bank_err_order_transaction_url(order) + '" />
+        <input type="hidden" name="url_retour"        id="url_retour"     value="' + url_retour + '" />
+        <input type="hidden" name="url_retour_ok"     id="url_retour_ok"  value="' + url_retour_ok + '" />
+        <input type="hidden" name="url_retour_err"    id="url_retour_err" value="' + url_retour_err + '" />
         <input type="hidden" name="lgue"              id="lgue"           value="' + oa["lgue"] + '" />
         <input type="hidden" name="societe"           id="societe"        value="' + oa["societe"] + '" />
         <input type="hidden" name="texte-libre"       id="texte-libre"    value="' + oa["texte-libre"] + '" />
