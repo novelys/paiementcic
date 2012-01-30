@@ -22,6 +22,7 @@ module PaiementCic::FormHelper
         <input type="hidden" name="societe"           id="societe"        value="' + oa["societe"] + '" />
         <input type="hidden" name="texte-libre"       id="texte-libre"    value="' + oa["texte-libre"] + '" />
         <input type="hidden" name="mail"              id="mail"	          value="''" />'
-    html.html_safe
+
+    html.respond_to?(:html_safe) ? html.html_safe : html
   end
 end
