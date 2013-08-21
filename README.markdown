@@ -14,7 +14,7 @@ In your Gemfile
 
 ## USAGE
 
-### Create a config file in /config :
+Create a paiement_cic.yml config file in Rails.root/config:
 
     development:
       # Hmac key calculated with the js calculator given by CIC
@@ -51,6 +51,8 @@ In your Gemfile
       url_retour: 'http://return.fr'
       url_retour_ok: 'http://return.ok'
       url_retour_err: 'http://return.err'
+
+***Note:*** this file _must_ be named _exactly_ 'paiement_cic.yml' or an exception would be raised
 
 ### In the controller :
 
