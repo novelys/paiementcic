@@ -42,7 +42,7 @@ Create a paiement_cic.yml config file in Rails.root/config:
       url_retour_err: 'http://return.err'
 
     production:
-      # Should be nearly the same as above, except target_url
+      # Should be mostly the same as above, except target_url
       hmac_key: "AA123456AAAAAA789123BBBBBB123456CCCCCC12345678"
       tpe: "010203"
       version: "3.0"
