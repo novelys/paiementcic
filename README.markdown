@@ -70,7 +70,7 @@ Create a paiement_cic.yml config file in Rails.root/config:
     # :button_text and :button_class are optionnal, use them for style cutomization if needed
     = paiement_cic_form(@request, :button_text => 'Payer', :button_class => 'btn btn-pink')
 
-### Now, listen back to the Bank transaction result :
+### Now, listen to the bank transaction result :
 
   Just add a create action in your paiement controller
 
