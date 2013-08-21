@@ -19,18 +19,25 @@ In your Gemfile
     development:
       # Hmac key calculated with the js calculator given by CIC
       hmac_key: "AA123456AAAAAA789123BBBBBB123456CCCCCC12345678"
+
       # TPE number
       tpe: "010203"
+
       # Version
       version: "3.0"
+
       # Merchant name
       societe: "marchantname"
+
       # Bank gateway URL
       target_url: "https://paiement.creditmutuel.fr/test/paiement.cgi"
+
       # Auto response URL
       url_retour: 'http://return.fr'
+
       # Success return path
       url_retour_ok: 'http://return.ok'
+
       # Error/cancel return path
       url_retour_err: 'http://return.err'
 
@@ -58,7 +65,7 @@ In your Gemfile
 
   The form generated is populated with hidden fields that will be sent to the bank gateway
 
-    # :button_text and :button_class are optionnal, us them for style cutomization if needed
+    # :button_text and :button_class are optionnal, use them for style cutomization if needed
     = paiement_cic_form(@request, :button_text => 'Payer', :button_class => 'btn btn-pink')
 
 ### Now, listen back to the Bank transaction result :
@@ -86,7 +93,8 @@ In your Gemfile
 
 
 ## Contributors
-Novelys Team
-Guillaume Barillot
+* Novelys Team, original gem and all cryptographic stuff
+* Guillaume Barillot refactoring and usage simplification
 
-## Licence, released under the MIT license
+## Licence
+released under the MIT license
