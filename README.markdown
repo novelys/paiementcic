@@ -58,7 +58,7 @@ In your Gemfile
 
       def index
         # :montant and :reference are required, you can also add :text_libre, :lgue and :mail arguements if needed
-        @request = PaiementCic.new.request(:montant => '123', :reference => '456')
+        @request = PaiementCmCic.new.request(:montant => '123', :reference => '456')
       end
 
 ### Then in the view, generate the form :
@@ -78,11 +78,11 @@ In your Gemfile
 
       def index
         # :montant and :reference are required, you can also add :text_libre, :lgue and :mail arguements if needed
-        @request = PaiementCic.new.request(:montant => '123', :reference => '456')
+        @request = PaiementCmCic.new.request(:montant => '123', :reference => '456')
       end
 
       def create
-        @response = PaiementCic.new.response(params)
+        @response = PaiementCmCic.new.response(params)
 
         # Save and/or process the order as you need it (or not)
       end

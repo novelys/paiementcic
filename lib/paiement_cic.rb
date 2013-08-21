@@ -2,7 +2,7 @@ require 'digest/sha1'
 require 'openssl'
 require 'paiement_settings'
 
-class PaiementCic < PaiementSettings
+class PaiementCmCic < PaiementSettings
 
   autoload :FormHelper, "paiement_cic/form_helper"
 
