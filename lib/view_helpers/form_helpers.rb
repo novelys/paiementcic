@@ -1,6 +1,9 @@
-module PaiementCic::FormHelper
+module FormHelpers
 
-  def paiement_cic_form(payment, options)
+  def paiement_cic_form(payment, options = {})
+
+    options[:button_text] ||= 'Payer'
+    options[:button_class] ||= ''
 
     html = "<form name='paiementcic' action='#{payment.target_url}' method='post'>\n"
 
@@ -22,5 +25,7 @@ module PaiementCic::FormHelper
     html << "</form>\n"
 
     html.respond_to?(:html_safe) ? html.html_safe : html
+
   end
+
 end

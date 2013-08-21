@@ -1,10 +1,11 @@
 require 'digest/sha1'
 require 'openssl'
 require 'paiement_settings'
+require "view_helpers/form_helpers"
 
-class PaiementCmCic < PaiementSettings
+ActionView::Base.send :include, FormHelpers
 
-  autoload :FormHelper, "paiement_cic/form_helper"
+class PaiementCic < PaiementSettings
 
   cattr_accessor :target_url, :version, :hmac_key, :tpe, :societe, :url_retour, :url_retour_ok, :url_retour_err, :societe
   attr_accessor :date, :montant, :reference, :texte_libre, :lgue, :mail
