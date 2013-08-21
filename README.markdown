@@ -60,7 +60,7 @@ Create a paiement_cic.yml config file in Rails.root/config:
 
       def index
         # :montant and :reference are required, you can also add :text_libre, :lgue and :mail arguements if needed
-        @request = PaiementCmCic.new.request(:montant => '123', :reference => '456')
+        @request = PaiementCic.new.request(:montant => '123', :reference => '456')
       end
 
 ### Then in the view, generate the form :
@@ -80,11 +80,11 @@ Create a paiement_cic.yml config file in Rails.root/config:
 
       def index
         # :montant and :reference are required, you can also add :text_libre, :lgue and :mail arguements if needed
-        @request = PaiementCmCic.new.request(:montant => '123', :reference => '456')
+        @request = PaiementCic.new.request(:montant => '123', :reference => '456')
       end
 
       def create
-        @response = PaiementCmCic.new.response(params)
+        @response = PaiementCic.new.response(params)
 
         # Save and/or process the order as you need it (or not)
       end
@@ -95,8 +95,8 @@ Create a paiement_cic.yml config file in Rails.root/config:
 
 
 ## Contributors
-* Novelys Team, original gem and all cryptographic stuff
-* Guillaume Barillot refactoring and usage simplification
+* Novelys Team : original gem and cryptographic stuff
+* Guillaume Barillot : refactoring and usage simplification
 
 ## Licence
 released under the MIT license
