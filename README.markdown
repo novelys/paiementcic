@@ -1,3 +1,4 @@
+#encoding: utf-8
 # Paiement CIC
 
 Paiement CIC is a plugin to ease credit card payment with the CIC / Credit Mutuel banks system version 3.0.

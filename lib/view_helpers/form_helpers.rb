@@ -1,3 +1,4 @@
+#encoding: utf-8
 module FormHelpers
 
   def paiement_cic_form(payment, options = {})
