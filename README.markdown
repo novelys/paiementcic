@@ -1,6 +1,6 @@
 # Paiement CIC
 
-Paiement CIC is a plugin to ease credit card payment with the CIC / Crédit Mutuel banks system version 3.0.
+Paiement CIC is a plugin to ease credit card payment with the CIC / Credit Mutuel banks system version 3.0.
 It's a Ruby on Rails port of the connexion kits published by the bank.
 
 * The banks payment [site](http://www.cmcicpaiement.fr)
