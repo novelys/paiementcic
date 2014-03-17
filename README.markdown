@@ -79,19 +79,19 @@ Create a paiement_cic.yml config file in Rails.root/config:
       protect_from_forgery :except => [:create]
 
       def index
-        # :montant and :reference are required, you can also add :text_libre, :lgue and :mail arguements if needed
+        # :montant and :reference are required, you can also add :text_libre, :lgue and :mail arguments if needed
         @request = PaiementCic.new.request(:montant => '123', :reference => '456')
       end
 
       def create
         @response = PaiementCic.new.response(params)
 
-        # Save and/or process the order as you need it (or not)
+        # Save and/or process the order 
       end
 
       ...
 
-  The @response variable contains all the regular rails params received from the bank, plus an extra :success boolean parameter.
+  The @response variable contains all the regular Rails params received from the bank, plus an extra :success boolean parameter.
 
 
 ## Contributors
