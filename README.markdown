@@ -1,105 +1,102 @@
 # Paiement CIC
 
-Paiement CIC is a plugin to ease credit card payment with the CIC / Crédit Mutuel banks system version 3.0.
+Paiement CIC is a plugin to ease credit card payment with the CIC / Credit Mutuel banks system version 3.0.
 It's a Ruby on Rails port of the connexion kits published by the bank.
 
-* The Plugin [site](http://github.com/novelys/cicpayment)
-* The banks payment [site](http://www.cmcicpaiement.fr)
+* The bank's API official [website](http://www.cmcicpaiement.fr)
 
 
 ## INSTALL
 
-    script/plugin install git://github.com/novelys/paiementcic.git
+In your Gemfile
 
-or, in your Gemfile
-
-    gem 'paiement_cic'
+    gem 'paiement_cic', :git => 'git://github.com/gbarillot/paiementcic.git'
 
 ## USAGE
 
-### in environment.rb :
+Create a paiement_cic.yml config file in Rails.root/config:
 
-    # here the hmac key calculated with the js calculator given by CIC
-    PaiementCic.hmac_key = "########################################"
-    # Here the TPE number
-    PaiementCic.tpe = "#######"
-    # Here the Merchant name
-    PaiementCic.societe = "xxxxxxxxxxxxx"
+    development:
+      # Hmac key calculated with the js calculator given by CIC
+      hmac_key: "AA123456AAAAAA789123BBBBBB123456CCCCCC12345678"
 
-### in development.rb :
+      # TPE number
+      tpe: "010203"
 
-    PaiementCic.target_url = "https://ssl.paiement.cic-banques.fr/test/paiement.cgi" # or https://paiement.creditmutuel.fr/test/paiement.cgi
+      # Version
+      version: "3.0"
 
-### in production.rb :
+      # Merchant name
+      societe: "marchantname"
 
-    PaiementCic.target_url = "https://ssl.paiement.cic-banques.fr/paiement.cgi" # or https://paiement.creditmutuel.fr/paiement.cgi
+      # Bank gateway URL
+      target_url: "https://paiement.creditmutuel.fr/test/paiement.cgi"
 
-### in order controller :
+      # Auto response URL
+      url_retour: 'http://return.fr'
 
-    helper :'paiement_cic/form'
+      # Success return path
+      url_retour_ok: 'http://return.ok'
 
-### in the payment by card view :
+      # Error/cancel return path
+      url_retour_err: 'http://return.err'
 
-    - form_tag PaiementCic.target_url do
-      = paiement_cic_hidden_fields(@order, @order_transaction, :url_retour => edit_order_url(order), :url_retour_ok => bank_ok_order_transaction_url(order_transaction), :url_retour_err => bank_err_order_transaction_url(order_transaction))
-      = submit_tag "Accéder au site de la banque", :style => "font-weight: bold;"
-      = image_tag "reassuring_pictograms.jpg", :alt => "Pictogrammes rassurants", :style => "width: 157px;"
+    production:
+      # Should be mostly the same as above, except target_url
+      hmac_key: "AA123456AAAAAA789123BBBBBB123456CCCCCC12345678"
+      tpe: "010203"
+      version: "3.0"
+      societe: "merchantname"
+      target_url: "https://paiement.creditmutuel.fr/paiement.cgi"
+      url_retour: 'http://return.fr'
+      url_retour_ok: 'http://return.ok'
+      url_retour_err: 'http://return.err'
 
-### in a controller for call back from the bank :
+***Note:*** this file _must_ be named _exactly_ 'paiement_cic.yml' or an exception would be raised
 
-    class OrderTransactionsController < ApplicationController
+### In the controller :
 
-      protect_from_forgery :except => [:bank_callback]
+    class PaymentsController < ApplicationController
 
-      def bank_callback
-        if PaiementCic.verify_hmac(params)
-          order_transaction = OrderTransaction.find_by_reference params[:reference], :last
-          order = order_transaction.order
-
-          code_retour = params['code-retour']
-
-          if code_retour == "Annulation"
-            order.cancel!
-            order.update_attribute :description, "Paiement refusé par la banque."
-
-          elsif code_retour == "payetest"
-            order.pay!
-            order.update_attribute :description, "TEST accepté par la banque."
-            order_transaction.update_attribute :test, true
-
-          elsif code_retour == "paiement"
-            order.pay!
-            order.update_attribute :description, "Paiement accepté par la banque."
-            order_transaction.update_attribute :test, false
-          end
-
-          order_transaction.update_attribute :success, true
-      
-          receipt = "0"
-        else
-          order.transaction_declined!
-          order.update_attribute :description, "Document Falsifie."
-          order_transaction.update_attribute :success, false
-
-          receipt = "1\n#{PaiementCic.mac_string}"
-        end
-        render :text => "Pragma: no-cache\nContent-type: text/plain\n\nversion=2\ncdr=#{receipt}"
+      def index
+        # :montant and :reference are required, you can also add :text_libre, :lgue and :mail arguements if needed
+        @request = PaiementCic.new.request(:montant => '123', :reference => '456')
       end
 
-      def bank_ok
-        @order_transaction = OrderTransaction.find params[:id]
-        @order = @order_transaction.order
-        @order.pay!
+### Then in the view, generate the form :
+
+  The form generated is populated with hidden fields that will be sent to the bank gateway
+
+    # :button_text and :button_class are optionnal, use them for style cutomization if needed
+    = paiement_cic_form(@request, :button_text => 'Payer', :button_class => 'btn btn-pink')
+
+### Now, listen to the bank transaction result :
+
+  Just add a create action in your paiement controller
+
+    class PaymentsController < ApplicationController
+
+      protect_from_forgery :except => [:create]
+
+      def index
+        # :montant and :reference are required, you can also add :text_libre, :lgue and :mail arguments if needed
+        @request = PaiementCic.new.request(:montant => '123', :reference => '456')
       end
 
-      def bank_err
-        order_transaction = OrderTransaction.find params[:id]
-        order = order_transaction.order
-        order.cancel!
+      def create
+        @response = PaiementCic.new.response(params)
+
+        # Save and/or process the order 
       end
-    end
+
+      ...
+
+  The @response variable contains all the regular Rails params received from the bank, plus an extra :success boolean parameter.
 
 
+## Contributors
+* Novelys Team : original gem and cryptographic stuff
+* Guillaume Barillot : refactoring and usage simplification
 
-## License
-Copyright (c) 2008-2012 Novelys Team, released under the MIT license
+## Licence
+released under the MIT license
