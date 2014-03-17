@@ -46,7 +46,7 @@ Create a paiement_cic.yml config file in Rails.root/config:
       hmac_key: "AA123456AAAAAA789123BBBBBB123456CCCCCC12345678"
       tpe: "010203"
       version: "3.0"
-      societe: "marchantname"
+      societe: "merchantname"
       target_url: "https://paiement.creditmutuel.fr/paiement.cgi"
       url_retour: 'http://return.fr'
       url_retour_ok: 'http://return.ok'
